@@ -1,0 +1,26 @@
+{
+  "name": "أذكار المسلم",
+  "short_name": "الأذكار",
+  "description": "تطبيق أذكار الصباح والمساء مع عدادات تفاعلية يعمل بدون إنترنت",
+  "start_url": "./index.html",
+  "scope": "./",
+  "id": "adhkar-muslim-pwa",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/farok6799/azkar/main/adhkar-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/farok6799/azkar/main/adhkar-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

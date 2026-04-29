@@ -707,23 +707,161 @@
             </div>
         </div>
 
-        <!-- قسم الإعدادات -->
-        <div id="view-settings" class="main-view">
+        <!-- قسم المزيد -->
+        <div id="view-more" class="main-view">
             <div class="header">
-                <h1>⚙️ الإعدادات</h1>
+                <h1>☰ المزيد</h1>
             </div>
-            <div class="settings-item">
-                <span>الوضع الليلي</span>
-                <button class="setting-btn theme-toggle" onclick="toggleTheme()">تغيير الثيم</button>
-            </div>
-            <div class="settings-item">
-                <span>تفعيل صوت الأذان (تلقائي)</span>
-                <input type="checkbox" id="adhan-toggle" onchange="toggleAdhan(this.checked)" style="width: 20px; height: 20px;">
+            <div class="category-grid">
+                <div class="category-card" onclick="switchView('settings-detail')">
+                    <span class="icon">⚙️</span>
+                    <span class="title">الإعدادات</span>
+                </div>
+                <div class="category-card" onclick="switchView('rawatib')">
+                    <span class="icon">🕌</span>
+                    <span class="title">السنن الرواتب</span>
+                </div>
+                <div class="category-card" onclick="switchView('tasbih')">
+                    <span class="icon">📿</span>
+                    <span class="title">السبحة</span>
+                </div>
+                <!-- هنا يمكنك إضافة كروت إضافية مستقبلاً مثل (المفضلة، عن التطبيق، إلخ) -->
             </div>
             <div class="footer">
                 <p>إصدار التطبيق: 2.5.0 (Modern UI)</p>
             </div>
         </div>
+
+        <!-- واجهة السنن الرواتب -->
+        <div id="view-rawatib" class="main-view">
+            <div class="header">
+                <button class="back-btn" onclick="switchView('more', document.querySelectorAll('.nav-item')[3])"><span>→</span></button>
+                <h1>🕌 السنن الرواتب</h1>
+            </div>
+            <div class="adhkar-benefit" style="margin: 15px; text-align: center; border-right: none; border-bottom: 3px solid #0d9488;">
+                من صلى في يوم وليلة ثنتي عشرة ركعة بني له بيت في الجنة
+            </div>
+            <div id="rawatib-container" class="prayer-list" style="padding: 10px;">
+                <!-- سيتم التوليد هنا -->
+            </div>
+            <button class="reset-btn" onclick="resetRawatib()" style="margin: 20px; width: calc(100% - 40px);">إعادة تعيين اليوم</button>
+        </div>
+
+        <!-- واجهة تفاصيل الإعدادات -->
+        <div id="view-settings-detail" class="main-view">
+            <div class="header">
+                <button class="back-btn" onclick="switchView('more', document.querySelectorAll('.nav-item')[3])"><span>→</span></button>
+                <h1>⚙️ الإعدادات</h1>
+            </div>
+            <br>
+            <div class="settings-item">
+                <span>الوضع الليلي</span>
+                <button class="setting-btn theme-toggle" onclick="toggleTheme()">تغيير الثيم</button>
+            </div>
+            <div class="settings-item">
+                <span>صوت الأذان (تلقائي)</span>
+                <input type="checkbox" id="adhan-toggle" onchange="toggleAdhan(this.checked)" style="width: 20px; height: 20px;">
+            </div>
+        </div>
+
+        <!-- قسم السبحة -->
+        <div id="view-tasbih" class="main-view">
+            <div class="header">
+                <button class="back-btn" onclick="switchView('more', document.querySelectorAll('.nav-item')[3])"><span>→</span></button>
+                <h1>📿 السبحة الإلكترونية</h1>
+                <button class="nav-btn" onclick="showAddTasbih()">➕</button>
+            </div>
+            
+            <div class="tasbih-container">
+                <div class="tasbih-display">
+                    <h2 id="tasbih-text">سبحان الله</h2>
+                    <div class="tasbih-counter-main">
+                        <span id="tasbih-count">0</span>
+                        <small id="tasbih-target">/ 33</small>
+                    </div>
+                </div>
+
+                <div class="tasbih-string-area" id="tasbih-trigger" onclick="handleTasbihClick()">
+                    <div class="bead-thread"></div>
+                    <div class="beads-track" id="beads-track">
+                        <!-- الحبات سيتم إنشاؤها هنا برمجياً -->
+                    </div>
+                </div>
+
+                <div class="tasbih-actions">
+                    <button class="nav-btn" onclick="resetCurrentTasbih()">إعادة تدوير</button>
+                    <button class="nav-btn" onclick="nextTasbih()">الذكر التالي</button>
+                </div>
+            </div>
+
+            <!-- قائمة أذكار السبحة -->
+            <div id="tasbih-list" class="prayer-list" style="margin-top: 20px; max-height: 200px;">
+                <!-- ستظهر الأذكار المضافة هنا -->
+            </div>
+        </div>
+
+        <!-- مودال إضافة ذكر جديد للسبحة -->
+        <div id="addTasbihModal" class="modal-overlay">
+            <div class="modal-content">
+                <h3>إضافة ذكر جديد</h3>
+                <br>
+                <input type="text" id="new-tasbih-text" placeholder="الذكر (مثلاً: استغفر الله)" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 10px; font-family: inherit;">
+                <input type="number" id="new-tasbih-target" placeholder="العدد المستهدف (مثلاً: 100)" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 20px; font-family: inherit;">
+                <div style="display: flex; gap: 10px;">
+                    <button class="nav-btn" style="flex: 1; background: #0d9488; color: white;" onclick="saveNewTasbih()">حفظ</button>
+                    <button class="nav-btn" style="flex: 1;" onclick="closeAddTasbih()">إلغاء</button>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .tasbih-container { display: flex; flex-direction: column; align-items: center; justify-content: space-around; flex: 1; padding: 20px 0; }
+            .tasbih-display { text-align: center; }
+            .tasbih-display h2 { color: #0d9488; margin-bottom: 5px; font-size: 1.5rem; }
+            .tasbih-counter-main { font-size: 3rem; font-weight: 900; color: #1e293b; }
+            body.dark-mode .tasbih-counter-main { color: #f1f5f9; }
+            .tasbih-counter-main small { font-size: 1.2rem; color: #94a3b8; }            
+
+            .tasbih-string-area { 
+                position: relative; width: 100%; height: 160px; 
+                display: flex; align-items: center; justify-content: flex-start; 
+                overflow: hidden; cursor: pointer; user-select: none; touch-action: none;
+            }
+            .bead-thread { 
+                position: absolute; width: 50000px; height: 6px; 
+                background: #4b5563; border-radius: 3px; z-index: 1;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+            }
+            .beads-track { 
+                display: flex; flex-direction: row; gap: 0; z-index: 2;
+                position: absolute; right: 50%; width: max-content;
+                transform: translateX(35px);
+                transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            }
+            .bead { 
+                width: 70px; height: 85px; border-radius: 35px / 42px;
+                background: radial-gradient(circle at 30% 30%, #0d9488, #064e3b);
+                box-shadow: 0 8px 15px rgba(0,0,0,0.3), inset -5px -5px 10px rgba(0,0,0,0.4), inset 5px 5px 10px rgba(255,255,255,0.2);
+                flex-shrink: 0; position: relative;
+                transition: margin 0.4s cubic-bezier(0.23, 1, 0.32, 1), opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+                margin-right: 20px; /* المسافة الافتراضية بين الحبات في وضع RTL */
+            }
+            .bead.counted { opacity: 0.3; filter: grayscale(0.8); transform: scale(0.85); }
+            .bead.active-bead { transform: scale(1.15); box-shadow: 0 0 25px rgba(13, 148, 136, 0.6); z-index: 10; }
+            .bead::after { 
+                content: ''; position: absolute; top: 15%; left: 20%; width: 30%; height: 20%; 
+                background: rgba(255,255,255,0.15); border-radius: 50%; filter: blur(3px); 
+            }
+            .tasbih-actions { display: flex; gap: 15px; width: 100%; justify-content: center; }
+            
+            .tasbih-item-card {
+                background: white; padding: 12px 15px; border-radius: 15px;
+                display: flex; justify-content: space-between; align-items: center;
+                margin-bottom: 8px; border: 1px solid #f1f5f9;
+            }
+            body.dark-mode .tasbih-item-card { background: #1e1e1e; border-color: #262626; }
+            .delete-tasbih { color: #ef4444; cursor: pointer; padding: 5px; }
+        </style>
 
         <!-- قسم القبلة -->
         <div id="view-qibla" class="main-view">
@@ -773,9 +911,9 @@
                 <span class="nav-icon">🕋</span>
                 <span class="nav-label">الصلاة</span>
             </button>
-            <button class="nav-item" onclick="switchView('settings', this)">
-                <span class="nav-icon">⚙️</span>
-                <span class="nav-label">الإعدادات</span>
+            <button class="nav-item" onclick="switchView('more', this)">
+                <span class="nav-icon">☰</span>
+                <span class="nav-label">المزيد</span>
             </button>
         </nav>
 
@@ -947,7 +1085,7 @@
 
         // 2. تعريف المتغيرات العامة
         let activeCategory = 'morning';
-        let currentIndices = { morning: 0, evening: 0, wakeup: 0, sleep: 0, mosque: 0, travel: 0, istikhara: 0, quran_prayers: 0, after_prayer: 0, opening_prayer: 0 };
+        let currentIndices = {};
 
 
         const TYPE_NAMES = { 
@@ -964,6 +1102,255 @@
         };
 
         let countdownInterval;
+
+        // --- منطق السنن الرواتب ---
+        function getRawatibData() {
+            const isFriday = new Date().getDay() === 5;
+            if (isFriday) {
+                return [
+                    { name: "سنة الفجر", time: "2 قبل", count: 2 },
+                    { name: "سنة الجمعة", time: "2 بعد (١)", count: 2 },
+                    { name: "سنة الجمعة", time: "2 بعد (٢)", count: 2 },
+                    { name: "سنة المغرب", time: "2 بعد", count: 2 },
+                    { name: "سنة العشاء", time: "2 بعد", count: 2 }
+                ];
+            }
+            return [
+                { name: "سنة الفجر", time: "2 قبل", count: 2 },
+                { name: "سنة الظهر", time: "2 قبل (١)", count: 2 },
+                { name: "سنة الظهر", time: "2 قبل (٢)", count: 2 },
+                { name: "سنة الظهر", time: "2 بعد", count: 2 },
+                { name: "سنة المغرب", time: "2 بعد", count: 2 },
+                { name: "سنة العشاء", time: "2 بعد", count: 2 }
+            ];
+        }
+
+        function renderRawatib() {
+            const container = document.getElementById('rawatib-container');
+            const today = new Date().toDateString();
+            const data = getRawatibData();
+            
+            container.innerHTML = data.map((item, idx) => {
+                const isDone = getRawatibStatus(idx, today);
+                return `
+                    <div class="prayer-time-card ${isDone ? 'next-prayer' : ''}" onclick="toggleRawatib(${idx})" style="cursor: pointer; margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 25px; height: 25px; border-radius: 50%; border: 2px solid #0d9488; display: flex; align-items: center; justify-content: center; color: white; background: ${isDone ? '#0d9488' : 'transparent'}">
+                                ${isDone ? '✓' : ''}
+                            </div>
+                            <div>
+                                <div class="prayer-name">${item.name}</div>
+                                <small style="color: #64748b; font-weight: bold;">${item.time}</small>
+                            </div>
+                        </div>
+                        <span class="prayer-time-val">${item.count} ركعات</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getRawatibStatus(idx, today) {
+            const stored = localStorage.getItem(`rawatib_${idx}`);
+            if (stored) {
+                const [date, status] = stored.split('|');
+                return date === today && status === 'true';
+            }
+            return false;
+        }
+
+        function toggleRawatib(idx) {
+            const today = new Date().toDateString();
+            const currentStatus = getRawatibStatus(idx, today);
+            localStorage.setItem(`rawatib_${idx}`, `${today}|${!currentStatus}`);
+            if ("vibrate" in navigator) navigator.vibrate(30);
+            renderRawatib();
+        }
+
+        function resetRawatib() {
+            if (confirm("هل تريد إعادة تعيين السنن لهذا اليوم؟")) {
+                const data = getRawatibData();
+                data.forEach((_, idx) => localStorage.removeItem(`rawatib_${idx}`));
+                renderRawatib();
+            }
+        }
+        // -------------------------
+
+        // --- منطق السبحة المتطور ---
+        let tasbihs = JSON.parse(localStorage.getItem('user_tasbihs')) || [
+            { text: "سبحان الله", target: 33, count: 0 },
+            { text: "الحمد لله", target: 33, count: 0 },
+            { text: "الله أكبر", target: 34, count: 0 }
+        ];
+        let currentTasbihIdx = 0;
+        let beadOffset = 0;
+
+        function updateTasbihUI() {
+            const t = tasbihs[currentTasbihIdx];
+            document.getElementById('tasbih-text').textContent = t.text;
+            document.getElementById('tasbih-count').textContent = t.count;
+            document.getElementById('tasbih-target').textContent = `/ ${t.target}`;
+            
+            // إنشاء الحبات في المسار (تراك)
+            const track = document.getElementById('beads-track');
+            track.innerHTML = '';
+            // إنشاء عدد حبات مساوٍ بالضبط للعدد المستهدف
+            for(let i=0; i < t.target; i++) {
+                const bead = document.createElement('div');
+                bead.className = 'bead';
+                track.appendChild(bead);
+            }
+            resetBeadPosition();
+            updateBeadsVisual();
+
+            const list = document.getElementById('tasbih-list');
+            list.innerHTML = tasbihs.map((item, idx) => `
+                <div class="tasbih-item-card" onclick="selectTasbih(${idx})" style="${idx === currentTasbihIdx ? 'border-color: #0d9488; background: rgba(13, 148, 136, 0.05);' : ''}">
+                    <span>${item.text} <small>(${item.target})</small></span>
+                    <span class="delete-tasbih" onclick="deleteTasbih(event, ${idx})">🗑️</span>
+                </div>
+            `).join('');
+        }
+
+        function resetBeadPosition() {
+            const t = tasbihs[currentTasbihIdx];
+            beadOffset = (t.count * 90); 
+            const track = document.getElementById('beads-track');
+            track.style.transition = 'none';
+            track.style.transform = `translateX(calc(35px + ${beadOffset}px + ${t.count > 0 ? 100 : 0}px))`;
+            updateBeadsVisual();
+        }
+
+        function updateBeadsVisual() {
+            const t = tasbihs[currentTasbihIdx];
+            const beads = document.querySelectorAll('.bead');
+            beads.forEach((bead, idx) => {
+                bead.classList.toggle('counted', idx < t.count);
+                bead.classList.toggle('active-bead', idx === t.count);
+                
+                // الفجوة (Gap) تظهر قبل الحبة الحالية لتبعدها عن المعدود (الذي أصبح على اليمين)
+                if (idx === t.count) {
+                    bead.style.marginRight = '120px'; 
+                } else {
+                    bead.style.marginRight = '20px';
+                }
+            });
+        }
+
+        function handleTasbihClick() {
+            const t = tasbihs[currentTasbihIdx];
+            if (t.count >= t.target) return;
+
+            t.count++;
+            document.getElementById('tasbih-count').textContent = t.count;
+            if ("vibrate" in navigator) navigator.vibrate(30);
+
+            beadOffset = (t.count * 90);
+            const track = document.getElementById('beads-track');
+            track.style.transition = 'transform 0.4s cubic-bezier(0.23, 1, 0.32, 1)';
+            track.style.transform = `translateX(calc(35px + ${beadOffset}px + 100px))`;
+
+            updateBeadsVisual();
+            saveTasbihs();
+        }
+
+        // --- دعم السحب (Swipe Logic) ---
+        let isDraggingBead = false;
+        let startXBead = 0;
+        let currentDragOffset = 0;
+
+        window.addEventListener('load', () => {
+            const triggerArea = document.getElementById('tasbih-trigger');
+            const track = document.getElementById('beads-track');
+
+            triggerArea.addEventListener('touchstart', (e) => {
+                if (activeCategory !== 'tasbih' && document.getElementById('view-tasbih').style.display === 'none') return;
+                isDraggingBead = true;
+                startXBead = e.touches[0].clientX;
+                track.style.transition = 'none';
+            }, {passive: true});
+
+            triggerArea.addEventListener('touchmove', (e) => {
+                if (!isDraggingBead) return;
+                let x = e.touches[0].clientX;
+                currentDragOffset = x - startXBead;
+
+                // السحب لليمين (موجب) هو الاتجاه الصحيح للعد في هذا التصميم
+                if (currentDragOffset < 0) currentDragOffset = 0; 
+                if (currentDragOffset > 150) currentDragOffset = 150;
+
+                track.style.transform = `translateX(calc(35px + ${beadOffset}px + 100px + ${currentDragOffset}px))`;
+            }, {passive: true});
+
+            triggerArea.addEventListener('touchend', () => {
+                if (!isDraggingBead) return;
+                isDraggingBead = false;
+                
+                // لو سحب الحبة لليمين بقوة يتم العد وتنتقل للمعدود على اليمين
+                if (currentDragOffset > 60) {
+                    handleTasbihClick(); // عد الحبة إذا سحبها لمسافة كافية
+                } else {
+                    track.style.transition = 'transform 0.3s ease';
+                    track.style.transform = `translateX(calc(35px + ${beadOffset}px + 100px))`;
+                }
+                currentDragOffset = 0;
+            });
+            
+            // دعم السحب بالماوس للحاسوب
+            triggerArea.addEventListener('mousedown', (e) => {
+                isDraggingBead = true;
+                startXBead = e.clientX;
+                track.style.transition = 'none';
+            });
+            window.addEventListener('mousemove', (e) => {
+                if (!isDraggingBead) return;
+                currentDragOffset = e.clientX - startXBead;
+                if (currentDragOffset < 0) currentDragOffset = 0;
+                track.style.transform = `translateX(calc(35px + ${beadOffset}px + ${tasbihs[currentTasbihIdx].count > 0 ? 100 : 0}px + ${currentDragOffset}px))`;
+            });
+            window.addEventListener('mouseup', () => {
+                if (isDraggingBead && currentDragOffset > 60) handleTasbihClick();
+                else if (isDraggingBead) {
+                    track.style.transition = 'transform 0.3s ease';
+                    track.style.transform = `translateX(calc(35px + ${beadOffset}px + ${tasbihs[currentTasbihIdx].count > 0 ? 100 : 0}px))`;
+                }
+                isDraggingBead = false;
+                currentDragOffset = 0;
+            });
+        });
+
+        function selectTasbih(idx) { currentTasbihIdx = idx; resetBeadPosition(); updateTasbihUI(); }
+        function nextTasbih() { currentTasbihIdx = (currentTasbihIdx + 1) % tasbihs.length; resetBeadPosition(); updateTasbihUI(); }
+        function resetCurrentTasbih() { tasbihs[currentTasbihIdx].count = 0; resetBeadPosition(); saveTasbihs(); updateTasbihUI(); }
+        
+        function showAddTasbih() { document.getElementById('addTasbihModal').style.display = 'flex'; }
+        function closeAddTasbih() { document.getElementById('addTasbihModal').style.display = 'none'; }
+        
+        function saveNewTasbih() {
+            const text = document.getElementById('new-tasbih-text').value;
+            const target = parseInt(document.getElementById('new-tasbih-target').value);
+            if (text && target) {
+                tasbihs.push({ text, target, count: 0 });
+                saveTasbihs();
+                updateTasbihUI();
+                closeAddTasbih();
+                document.getElementById('new-tasbih-text').value = '';
+                document.getElementById('new-tasbih-target').value = '';
+            }
+        }
+
+        function deleteTasbih(e, idx) {
+            e.stopPropagation();
+            if (tasbihs.length <= 1) return alert("يجب أن يكون هناك ذكر واحد على الأقل");
+            if (confirm("حذف هذا الذكر؟")) {
+                tasbihs.splice(idx, 1);
+                currentTasbihIdx = 0;
+                saveTasbihs();
+                updateTasbihUI();
+            }
+        }
+
+        function saveTasbihs() { localStorage.setItem('user_tasbihs', JSON.stringify(tasbihs)); }
+        // -------------------------
 
         // --- منطق القبلة الدقيق ---
         let userQiblaAngle = 0;
@@ -1185,10 +1572,22 @@
             if (viewId === 'prayer') {
                 getPrayerTimes();
             }
+            
+            // تحديث السبحة عند فتحها
+            if (viewId === 'tasbih') {
+                updateTasbihUI();
+            }
+            // تحديث السنن عند فتحها
+            if (viewId === 'rawatib') {
+                renderRawatib();
+            }
         }
 
         function openCategory(type) {
             activeCategory = type;
+            // Initialize index for the category if it doesn't exist
+            if (currentIndices[type] === undefined) currentIndices[type] = 0;
+            
             const titleEl = document.getElementById('counter-title');
             if (titleEl) titleEl.textContent = TYPE_NAMES[type];            
             switchView('counter');
